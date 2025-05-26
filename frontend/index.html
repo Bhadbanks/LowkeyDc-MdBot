@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Generate WhatsApp Bot Session</title>
+  <style>
+    body { font-family: sans-serif; background: #f8f8f8; padding: 20px; }
+    .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px #ccc; max-width: 500px; margin: auto; }
+    h1 { text-align: center; }
+    input, button { width: 100%; padding: 10px; margin-top: 10px; }
+    img { display: block; margin: 20px auto; max-width: 100%; }
+    .copy-box { background: #eee; padding: 10px; border-radius: 5px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>🔐 WhatsApp Bot Link</h1>
+    <input type="text" id="pairid" placeholder="Enter session ID (e.g., user123)" />
+    <button onclick="generate()">Generate Pairing Code</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    async function generate() {
+      const id = document.getElementById('pairid').value;
+      const res = await fetch('/api/generate-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      const out = document.getElementById('output');
+      if (data.qr) {
+        out.innerHTML = `<img src="${data.qr}" /><p>Scan QR with WhatsApp</p>`;
+      } else if (data.error) {
+        out.innerText = data.error;
+      }
+    }
+  </script>
+</body>
+</html>
